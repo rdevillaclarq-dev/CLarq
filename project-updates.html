@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>Project Updates</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green: #1B5E37;
+    --green-mid: #2E7D52;
+    --green-light: #E8F5EE;
+    --green-text: #145230;
+    --bg: #F7F6F2;
+    --white: #FFFFFF;
+    --border: #E4E2DA;
+    --text: #1A1A18;
+    --text2: #6B6B65;
+    --text3: #A8A8A2;
+    --danger: #D63031;
+    --danger-bg: #FFF0F0;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --tab-h: 64px;
+    --header-h: 60px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+
+  .header {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    background: var(--green);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 18px; z-index: 200;
+  }
+  .header h1 { font-size: 16px; font-weight: 700; color: #fff; }
+  .header p { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 1px; }
+  .hdr-badge { background: rgba(255,255,255,0.2); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; }
+
+  .scroll-area {
+    position: fixed;
+    top: var(--header-h); bottom: var(--tab-h);
+    left: 0; right: 0;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    background: var(--bg);
+  }
+
+  .page { display: none; padding: 16px 14px 30px; }
+  .page.active { display: block; }
+
+  .card { background: var(--white); border-radius: var(--radius); padding: 18px 16px; margin-bottom: 12px; border: 1px solid var(--border); }
+  .card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 16px; }
+
+  .field { margin-bottom: 14px; }
+  .field label { font-size: 13px; font-weight: 600; color: var(--text2); display: block; margin-bottom: 7px; }
+  .field input, .field textarea {
+    width: 100%; padding: 14px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); font-size: 16px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg); color: var(--text); outline: none;
+    transition: border-color 0.2s; -webkit-appearance: none;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--green-mid); background: #fff; }
+  .field textarea { resize: none; height: 120px; line-height: 1.65; }
+  .hint { font-size: 11px; color: var(--text3); margin-top: 5px; }
+
+  .photo-box {
+    border: 2px dashed var(--border); border-radius: var(--radius-sm);
+    padding: 24px 16px; text-align: center; cursor: pointer;
+    background: var(--bg); transition: all 0.2s;
+  }
+  .photo-box:active { border-color: var(--green-mid); background: var(--green-light); }
+  .photo-box input { display: none; }
+  .photo-box .pb-icon { font-size: 36px; }
+  .photo-box .pb-title { font-size: 15px; font-weight: 600; color: var(--text2); margin-top: 8px; }
+  .photo-box .pb-sub { font-size: 12px; color: var(--text3); margin-top: 3px; }
+
+  .previews { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .thumb { position: relative; width: 82px; height: 82px; }
+  .thumb img { width: 82px; height: 82px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); }
+  .thumb-x { position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; background: var(--danger); color: #fff; border-radius: 50%; border: 2px solid #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+  .btn { width: 100%; padding: 15px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: transform 0.1s, opacity 0.15s; }
+  .btn:active { transform: scale(0.97); opacity: 0.85; }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text2); }
+  .btn-copy { background: var(--green-light); color: var(--green-text); }
+  .btn-danger { background: var(--danger-bg); color: var(--danger); }
+  .btn-sm { padding: 13px 16px; font-size: 13px; width: auto; border: 1.5px solid var(--border); }
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-row .btn:first-child { flex: 1; }
+
+  .update-item { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); border-left: 4px solid var(--green-mid); padding: 14px; margin-bottom: 10px; }
+  .u-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .u-proj { font-size: 16px; font-weight: 700; }
+  .u-by { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .u-time { font-size: 11px; color: var(--text3); }
+  .u-del { background: none; border: none; color: var(--text3); font-size: 24px; cursor: pointer; line-height: 1; padding: 0 2px; }
+  .u-del:active { color: var(--danger); }
+  .u-tasks { margin-top: 10px; font-size: 14px; color: var(--text2); line-height: 1.75; }
+  .u-photos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .u-photos img { width: 68px; height: 68px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+  .u-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .tag { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+  .tag-g { background: var(--green-light); color: var(--green-text); }
+  .tag-gray { background: #F0EFE9; color: var(--text2); }
+
+  .compiled-box { background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 14px; font-size: 13px; line-height: 1.85; color: var(--text); white-space: pre-wrap; word-break: break-word; font-family: monospace; min-height: 100px; }
+
+  .photo-grp { margin-bottom: 16px; }
+  .photo-grp-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .photo-grp-imgs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .photo-grp-imgs img { width: 88px; height: 88px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); }
+
+  .step { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+  .step-n { min-width: 28px; width: 28px; height: 28px; background: var(--green); color: #fff; border-radius: 50%; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .step-t { font-size: 14px; color: var(--text2); line-height: 1.6; padding-top: 4px; }
+  .step-t strong { color: var(--text); }
+
+  .empty { text-align: center; padding: 56px 24px; }
+  .empty-ico { font-size: 52px; }
+  .empty h3 { font-size: 17px; font-weight: 700; color: var(--text2); margin-top: 14px; }
+  .empty p { font-size: 13px; color: var(--text3); margin-top: 6px; line-height: 1.6; }
+
+  .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; height: var(--tab-h); background: var(--white); border-top: 1px solid var(--border); display: flex; z-index: 200; padding-bottom: env(safe-area-inset-bottom, 0); }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; color: var(--text3); transition: color 0.15s; position: relative; }
+  .tab.active { color: var(--green); }
+  .tab-ico { font-size: 22px; line-height: 1; }
+  .tab-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
+  .tab-dot { position: absolute; top: 8px; right: calc(50% - 20px); background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; padding: 0 4px; display: none; align-items: center; justify-content: center; }
+
+  .toast { position: fixed; bottom: calc(var(--tab-h) + 14px); left: 50%; transform: translateX(-50%) translateY(16px); background: #1A1A18; color: #fff; padding: 11px 22px; border-radius: 24px; font-size: 13px; font-weight: 600; opacity: 0; transition: all 0.25s; z-index: 999; white-space: nowrap; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>📋 Project Updates</h1>
+    <p>Daily field update tracker</p>
+  </div>
+  <div class="hdr-badge" id="hdr-count">0 updates</div>
+</div>
+
+<div class="scroll-area">
+
+  <!-- SUBMIT -->
+  <div class="page active" id="pg-0">
+    <div class="card">
+      <div class="card-title">Submit your update</div>
+      <div class="field">
+        <label>Your name</label>
+        <input type="text" id="f-sender" placeholder="e.g. Juan dela Cruz" />
+      </div>
+      <div class="field">
+        <label>Project name</label>
+        <input type="text" id="f-project" placeholder="e.g. Kim Santos, Block A..." />
+      </div>
+      <div class="field">
+        <label>Tasks done today</label>
+        <textarea id="f-tasks" placeholder="- Inaayos ang mga pavers&#10;- Removing of old pedestal&#10;- ..."></textarea>
+        <div class="hint">Start each task with a dash ( - )</div>
+      </div>
+      <div class="field">
+        <label>Photos</label>
+        <div class="photo-box" onclick="document.getElementById('f-photos').click()">
+          <input type="file" id="f-photos" accept="image/*" multiple />
+          <div class="pb-icon">📷</div>
+          <div class="pb-title">Tap to attach photos</div>
+          <div class="pb-sub">You can select multiple photos</div>
+        </div>
+        <div class="previews" id="f-previews"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-green" onclick="submitUpdate()">✓&nbsp; Submit update</button>
+        <button class="btn btn-sm btn-outline" onclick="resetForm()">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL UPDATES -->
+  <div class="page" id="pg-1">
+    <div id="updates-list"></div>
+  </div>
+
+  <!-- COMPILE -->
+  <div class="page" id="pg-2">
+    <div class="card">
+      <div class="card-title">Viber message — copy &amp; paste</div>
+      <div class="compiled-box" id="compiled-text">No updates yet.</div>
+      <div class="btn-row">
+        <button class="btn btn-copy" onclick="copyMsg()">📋&nbsp; Copy message</button>
+        <button class="btn btn-sm btn-outline" onclick="buildCompile()">↻ Refresh</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Photos to attach in Viber</div>
+      <div id="compiled-photos"><p style="font-size:13px;color:var(--text3);">No photos yet.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">How to send in Viber</div>
+      <div class="step"><div class="step-n">1</div><div class="step-t">Tap <strong>Copy message</strong> above</div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-t">Open your <strong>Viber group chat</strong></div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-t"><strong>Paste and send</strong> the message</div></div>
+      <div class="step"><div class="step-n">4</div><div class="step-t">Attach the <strong>photos per project</strong> shown above, label each with the project name</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" id="tab-0" onclick="goTab(0)">
+    <span class="tab-ico">✏️</span>
+    <span class="tab-lbl">SUBMIT</span>
+  </div>
+  <div class="tab" id="tab-1" onclick="goTab(1)" style="position:relative;">
+    <span class="tab-ico">📂</span>
+    <span class="tab-dot" id="tab-dot">0</span>
+    <span class="tab-lbl">UPDATES</span>
+  </div>
+  <div class="tab" id="tab-2" onclick="goTab(2)">
+    <span class="tab-ico">📤</span>
+    <span class="tab-lbl">COMPILE</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let updates = [], photos = {}, pending = [];
+try { updates = JSON.parse(localStorage.getItem('pu4') || '[]'); } catch(e){}
+try { photos  = JSON.parse(localStorage.getItem('pu4p') || '{}'); } catch(e){}
+
+function save() {
+  try { localStorage.setItem('pu4', JSON.stringify(updates)); localStorage.setItem('pu4p', JSON.stringify(photos)); } catch(e){ toast('Storage full — delete old updates'); }
+  const n = updates.length;
+  document.getElementById('hdr-count').textContent = n + ' update' + (n!==1?'s':'');
+  const dot = document.getElementById('tab-dot');
+  dot.style.display = n > 0 ? 'flex' : 'none';
+  dot.textContent = n;
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+function goTab(i) {
+  [0,1,2].forEach(j => {
+    document.getElementById('tab-'+j).classList.toggle('active', i===j);
+    document.getElementById('pg-'+j).classList.toggle('active', i===j);
+  });
+  document.querySelector('.scroll-area').scrollTop = 0;
+  if (i===1) renderAll();
+  if (i===2) buildCompile();
+}
+
+document.getElementById('f-photos').addEventListener('change', function() {
+  pending = [];
+  document.getElementById('f-previews').innerHTML = '';
+  Array.from(this.files).forEach(f => {
+    const r = new FileReader();
+    r.onload = e => { pending.push({ name: f.name, src: e.target.result }); renderPrev(); };
+    r.readAsDataURL(f);
+  });
+});
+
+function renderPrev() {
+  document.getElementById('f-previews').innerHTML = pending.map((p,i) =>
+    `<div class="thumb"><img src="${p.src}"><div class="thumb-x" onclick="rmPhoto(${i})">×</div></div>`
+  ).join('');
+}
+
+function rmPhoto(i) { pending.splice(i,1); renderPrev(); }
+
+function submitUpdate() {
+  const sender  = document.getElementById('f-sender').value.trim();
+  const project = document.getElementById('f-project').value.trim();
+  const tasks   = document.getElementById('f-tasks').value.trim();
+  if (!sender)  { toast('⚠️ Please enter your name'); return; }
+  if (!project) { toast('⚠️ Please enter project name'); return; }
+  if (!tasks)   { toast('⚠️ Please enter tasks done today'); return; }
+  const now = new Date(), id = 'u'+Date.now();
+  updates.push({ id, sender, project, tasks, photoCount: pending.length,
+    time: now.toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit'}),
+    date: now.toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'})
+  });
+  if (pending.length) photos[id] = [...pending];
+  save(); resetForm(); toast('✅ Update submitted!');
+}
+
+function resetForm() {
+  ['f-sender','f-project','f-tasks'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('f-photos').value='';
+  document.getElementById('f-previews').innerHTML='';
+  pending=[];
+}
+
+function renderAll() {
+  const el = document.getElementById('updates-list');
+  if (!updates.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-ico">📭</div><h3>No updates yet</h3><p>Workers submit their updates from the Submit tab.</p></div>`;
+    return;
+  }
+  el.innerHTML = updates.map(u => {
+    const lines = u.tasks.split('\n').map(t=>t.replace(/^[-•]\s*/,'').trim()).filter(Boolean).map(t=>'• '+t).join('<br>');
+    const thumbs = (photos[u.id]||[]).map(p=>`<img src="${p.src}">`).join('');
+    return `<div class="update-item">
+      <div class="u-top">
+        <div><div class="u-proj">${u.project}</div><div class="u-by">by ${u.sender}</div></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="u-time">${u.time}</div>
+          <button class="u-del" onclick="delUpdate('${u.id}')">×</button>
+        </div>
+      </div>
+      <div class="u-tasks">${lines}</div>
+      ${thumbs?`<div class="u-photos">${thumbs}</div>`:''}
+      <div class="u-tags">
+        <span class="tag tag-g">${u.project}</span>
+        ${u.photoCount>0?`<span class="tag tag-gray">📷 ${u.photoCount} photo(s)</span>`:''}
+      </div>
+    </div>`;
+  }).join('') + `<button class="btn btn-danger" style="margin-top:6px;" onclick="clearAll()">🗑&nbsp; Clear all updates</button>`;
+}
+
+function delUpdate(id) {
+  if (!confirm('Delete this update?')) return;
+  updates = updates.filter(u=>u.id!==id); delete photos[id];
+  save(); renderAll();
+}
+
+function clearAll() {
+  if (!confirm('Clear ALL updates? This cannot be undone.')) return;
+  updates=[]; photos={}; save(); renderAll();
+}
+
+function buildCompile() {
+  const out = document.getElementById('compiled-text');
+  const pdiv = document.getElementById('compiled-photos');
+  if (!updates.length) { out.textContent='No updates yet.'; pdiv.innerHTML='<p style="font-size:13px;color:var(--text3);">No photos yet.</p>'; return; }
+  const today = updates[updates.length-1].date;
+  let msg = '📋 PROJECT UPDATES\n📅 '+today+'\n';
+  updates.forEach(u => {
+    msg += '\n📌 '+u.project.toUpperCase()+'\nReported by: '+u.sender+'\n';
+    u.tasks.split('\n').forEach(t => { const c=t.replace(/^[-•]\s*/,'').trim(); if(c) msg+='• '+c+'\n'; });
+    if (u.photoCount>0) msg+='📷 '+u.photoCount+' photo(s) attached\n';
+  });
+  msg += '\n— Compiled by April D. @AprilD';
+  out.textContent = msg;
+  let html='', has=false;
+  updates.forEach(u => {
+    if (photos[u.id]&&photos[u.id].length) {
+      has=true;
+      html+=`<div class="photo-grp"><div class="photo-grp-title">📌 ${u.project} — ${u.sender}</div><div class="photo-grp-imgs">${photos[u.id].map(p=>`<img src="${p.src}">`).join('')}</div></div>`;
+    }
+  });
+  pdiv.innerHTML = has ? html : '<p style="font-size:13px;color:var(--text3);">No photos submitted yet.</p>';
+}
+
+function copyMsg() {
+  const text = document.getElementById('compiled-text').textContent;
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(()=>toast('📋 Copied! Paste on Viber 🎉'));
+  else { const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); toast('📋 Copied! Paste on Viber 🎉'); }
+}
+
+save();
+</script>
+</body>
+</html>
